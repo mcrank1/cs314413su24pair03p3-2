@@ -1,5 +1,7 @@
 package edu.luc.etl.cs313.android.shapes.model;
 
+import java.util.List;
+
 /**
  * A shape visitor for calculating the bounding box, that is, the smallest
  * rectangle containing the shape. The resulting bounding box is returned as a
@@ -31,7 +33,7 @@ public class BoundingBox implements Visitor<Location> {
         int maxY = Integer.MIN_VALUE;
 
         //Iterate over each shape in group to determine bounding box
-        for(Shape shape : g.getShape()) {
+        for(Shape shape : g.getShapes()) {
             //calculate the bounding box of the current shape
             Location loc = shape.accept(this);
             Rectangle rect = (Rectangle) loc.getShape();
@@ -78,21 +80,23 @@ public class BoundingBox implements Visitor<Location> {
     @Override
     public Location onPolygon(final Polygon s) {
         //get points of the polygon
-        float[] points = s.getPoints();
+        List<? extends Point> points = s.getPoints();
         //Initialize min and max values for x and y to the first point
-        float minX = points[0];
-        float minY = points[1];
-        float maxX = points[0];
-        float maxY = points[1];
+        float minX = points.get(0).getX();
+        float minY = points.get(0).getY();
+        float maxX = points.get(0).getX();
+        float maxY = points.get(0).getY();
 
         //Iterate over the points to find the min and max x and y values
-        for(int i = 2; i < points.length; i++) {
-            minX = Math.min(minX, points[i]);
-            minY = Math.min(minY, points[i + 1]);
-            maxX = Math.max(maxX, points[i]);
-            maxY = Math.max(maxY, points[i + 1]);
+        for(int i = 2; i < points.size(); i++) {
+            float x = points.get(i).getX();
+            float y = points.get(i).getY();
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
         }
-        return new Location(minX, minY, maxX - minX, maxY - minY);
+        return new Location((int) minX, (int) minY,  new Rectangle((int)(maxX - minX), (int)(maxY - minY)));
 
     }
 }
