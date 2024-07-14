@@ -36,6 +36,8 @@ public class Draw implements Visitor<Void> {
         paint.setStyle(Style.FILL_AND_STROKE);
         //Visit the shape in StrokeColor to draw it with the new color
         c.getShape().accept(this);
+        //reset after drawing
+        paint.setStyle(Style.STROKE);
 
         return null;
     }
