@@ -32,6 +32,8 @@ public class Draw implements Visitor<Void> {
     public Void onStrokeColor(final StrokeColor c) {
         //Set paint color
         paint.setColor(c.getColor());
+        //Test wanted to invoke paint.setStyle(FILL_AND_STROKE) so added below
+        paint.setStyle(Style.FILL_AND_STROKE);
         //Visit the shape in StrokeColor to draw it with the new color
         c.getShape().accept(this);
 

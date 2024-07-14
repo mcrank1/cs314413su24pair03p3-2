@@ -21,7 +21,7 @@ public class Count implements Visitor<Integer> {
     public Integer onGroup(final Group g) {
         int count = 0;
         //iterate over each shape in the group and sum the counts
-        for(Shape shape : g.getShape()) {
+        for(Shape shape : g.getShapes()) {
             count += shape.accept(this);
         }
         //return the total count of basic shapes in the group
