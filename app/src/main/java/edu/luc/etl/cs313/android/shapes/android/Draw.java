@@ -5,11 +5,13 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import edu.luc.etl.cs313.android.shapes.model.*;
 
+
+import java.util.List;
+
 /**
  * A Visitor for drawing a shape to an Android canvas.
  */
 public class Draw implements Visitor<Void> {
-
 
 
     private final Canvas canvas;
@@ -36,7 +38,6 @@ public class Draw implements Visitor<Void> {
         paint.setStyle(Style.FILL_AND_STROKE);
         //Visit the shape in StrokeColor to draw it with the new color
         c.getShape().accept(this);
-        //reset after drawing
         paint.setStyle(Style.STROKE);
 
         return null;
@@ -57,7 +58,7 @@ public class Draw implements Visitor<Void> {
     @Override
     public Void onGroup(final Group g) {
         //iterate through each shape in the group and draw it
-        for(Shape shape : g.getShapes()) {
+        for (Shape shape : g.getShapes()) {
             shape.accept(this);
         }
 
@@ -80,7 +81,7 @@ public class Draw implements Visitor<Void> {
     @Override
     public Void onRectangle(final Rectangle r) {
         //draw rectangle
-        canvas.drawRect(0,0, r.getWidth(), r.getHeight(), paint);
+        canvas.drawRect(0, 0, r.getWidth(), r.getHeight(), paint);
 
         return null;
     }
@@ -96,7 +97,19 @@ public class Draw implements Visitor<Void> {
     @Override
     public Void onPolygon(final Polygon s) {
 
-        final float[] pts = null;
+        //get list of polygon points
+        final List<?extends Shape> shapes = s.getShapes();
+
+        //Create array for coordinates of points
+        //size times 2 since each point has x and y coordinate
+        final float[] pts = new float[shapes.size() * 2];
+
+        //iterate through the list of points
+        for (int i = 0; i < shapes.size(); i++) {
+            Point point = (Point) shapes.get(i);
+            pts[i * 2] = point.getX();
+            pts[i * 2 + 1] = point.getY();
+        }
 
         canvas.drawLines(pts, paint);
         return null;
