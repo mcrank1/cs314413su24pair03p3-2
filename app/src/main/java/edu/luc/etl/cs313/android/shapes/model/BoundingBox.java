@@ -44,7 +44,7 @@ public class BoundingBox implements Visitor<Location> {
             minX = Math.min(minX, x);
             minY = Math.min(minY, y);
             maxX = Math.max(maxX, x + rect.getWidth());
-            maxY = Math.max(maxY, y + rect.getWidth());
+            maxY = Math.max(maxY, y + rect.getHeight());
         }
         //return the bounding box that contains all the shapes in the group
         return new Location(minX, minY, new Rectangle(maxX - minX, maxY - minY));
