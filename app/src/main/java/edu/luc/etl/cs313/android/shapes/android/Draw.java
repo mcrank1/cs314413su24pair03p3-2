@@ -38,6 +38,7 @@ public class Draw implements Visitor<Void> {
         paint.setStyle(Style.FILL_AND_STROKE);
         //Visit the shape in StrokeColor to draw it with the new color
         c.getShape().accept(this);
+        //restore style to stroke after coloring
         paint.setStyle(Style.STROKE);
 
         return null;
@@ -59,7 +60,9 @@ public class Draw implements Visitor<Void> {
     public Void onGroup(final Group g) {
         //iterate through each shape in the group and draw it
         for (Shape shape : g.getShapes()) {
-            shape.accept(this);
+            if (shape != null){
+                shape.accept(this);
+            }
         }
 
         return null;
@@ -102,13 +105,19 @@ public class Draw implements Visitor<Void> {
 
         //Create array for coordinates of points
         //size times 2 since each point has x and y coordinate
-        final float[] pts = new float[shapes.size() * 2];
+        final float[] pts = new float[(shapes.size() + 1) * 2]; // +1 to close polygon
 
         //iterate through the list of points
         for (int i = 0; i < shapes.size(); i++) {
             Point point = (Point) shapes.get(i);
             pts[i * 2] = point.getX();
             pts[i * 2 + 1] = point.getY();
+        }
+        // close polygon
+        if (!shapes.isEmpty()){
+            Point firstPoint = (Point) shapes.get(0);
+            pts[shapes.size() * 2] = firstPoint.getX();
+            pts[shapes.size() * 2 + 1] = firstPoint.getY();
         }
 
         canvas.drawLines(pts, paint);
