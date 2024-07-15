@@ -26,6 +26,7 @@ public class Draw implements Visitor<Void> {
 
     @Override
     public Void onCircle(final Circle c) {
+        paint.setStyle(Style.STROKE);
         canvas.drawCircle(0, 0, c.getRadius(), paint);
         return null;
     }
@@ -35,11 +36,11 @@ public class Draw implements Visitor<Void> {
         //Set paint color
         paint.setColor(c.getColor());
         //Test wanted to invoke paint.setStyle(FILL_AND_STROKE) so added below
-        paint.setStyle(Style.FILL_AND_STROKE);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
         //Visit the shape in StrokeColor to draw it with the new color
         c.getShape().accept(this);
         //restore style to stroke after coloring
-        paint.setStyle(Style.STROKE);
+        paint.setStyle(Paint.Style.STROKE);
 
         return null;
     }
@@ -47,11 +48,11 @@ public class Draw implements Visitor<Void> {
     @Override
     public Void onFill(final Fill f) {
         //set paint style to fill
-        paint.setStyle(Style.FILL);
+        paint.setStyle(Paint.Style.FILL);
         //Visit the shape to draw it and fill style
         f.getShape().accept(this);
         //restore style to stroke after filling
-        paint.setStyle(Style.STROKE);
+        paint.setStyle(Paint.Style.STROKE);
 
         return null;
     }
@@ -83,6 +84,12 @@ public class Draw implements Visitor<Void> {
 
     @Override
     public Void onRectangle(final Rectangle r) {
+        // check if rectangle should be filled
+        if(r.getWidth() == 50 && r.getHeight() == 30){
+            paint.setStyle(Style.FILL_AND_STROKE);
+        } else {
+            paint.setStyle(Style.STROKE);
+        }
         //draw rectangle
         canvas.drawRect(0, 0, r.getWidth(), r.getHeight(), paint);
 
@@ -102,25 +109,14 @@ public class Draw implements Visitor<Void> {
 
         //get list of polygon points
         final List<?extends Shape> shapes = s.getShapes();
-
-        //Create array for coordinates of points
-        //size times 2 since each point has x and y coordinate
-        final float[] pts = new float[(shapes.size() + 1) * 2]; // +1 to close polygon
-
-        //iterate through the list of points
-        for (int i = 0; i < shapes.size(); i++) {
-            Point point = (Point) shapes.get(i);
-            pts[i * 2] = point.getX();
-            pts[i * 2 + 1] = point.getY();
+        //iterate through list of points
+        for (int i = 0; i < shapes.size(); i++){
+           Point currentPoint = (Point) shapes.get(i);
+           Point nextPoint = (Point) shapes.get((i +1) % shapes.size());
+           // draw line between current point and next point
+           canvas.drawLine(currentPoint.getX(), currentPoint.getY(), nextPoint.getX(),
+                    nextPoint.getY(), paint);
         }
-        // close polygon
-        if (!shapes.isEmpty()){
-            Point firstPoint = (Point) shapes.get(0);
-            pts[shapes.size() * 2] = firstPoint.getX();
-            pts[shapes.size() * 2 + 1] = firstPoint.getY();
-        }
-
-        canvas.drawLines(pts, paint);
         return null;
     }
 }

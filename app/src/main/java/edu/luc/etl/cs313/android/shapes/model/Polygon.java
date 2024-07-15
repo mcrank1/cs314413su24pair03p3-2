@@ -9,7 +9,7 @@ import java.util.List;
 public class Polygon extends Group {
 
     public Polygon(final Point... points) {
-        super(points);
+        super(points); assert points.length >= 3; //polygon has at least 3 points
     }
 
     @SuppressWarnings("unchecked")
